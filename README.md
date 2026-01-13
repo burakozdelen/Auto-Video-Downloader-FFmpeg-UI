@@ -1,6 +1,6 @@
 # 🎬 Auto-Video-Downloader-FFmpeg-UI (LinkCatch)
 
-[![Download LinkCatch](https://img.shields.io/badge/Download-Latest_Version-blue?style=for-the-badge&logo=windows)](https://github.com/burakozdelen/Auto-Video-Downloader-FFmpeg-UI/releases/tag/v1.0)
+[![Download LinkCatch](https://img.shields.io/badge/Download-Latest_Version-blue?style=for-the-badge&logo=windows)](https://github.com/burakozdelen/Auto-Video-Downloader-FFmpeg-UI/releases/download/v1.0/Video.Downloader.v1.0.zip)
 
 **Select Language / Dil Seçiniz:**
 [🇺🇸 English](#-english) | [🇹🇷 Türkçe](#-türkçe)
