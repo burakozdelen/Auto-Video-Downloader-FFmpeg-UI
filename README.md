@@ -64,6 +64,10 @@ This project uses the following amazing open-source projects to perform complex 
 * **Titanium Web Proxy:** A powerful HTTP(S) proxy server for C#.
     🔗 [https://github.com/justcoding121/Titanium-Web-Proxy](https://github.com/justcoding121/Titanium-Web-Proxy)
 
+### ⚖️ Disclaimer
+
+This project is intended solely for educational and personal use; the developer assumes no liability for any misuse or copyright infringement.
+
 ---
 
 ## 🇹🇷 Türkçe
@@ -122,3 +126,7 @@ Bu proje, karmaşık medya işlemlerini gerçekleştirmek için aşağıdaki har
 
 * **Titanium Web Proxy:** C# için güçlü HTTP(S) proxy sunucusu.
     🔗 [https://github.com/justcoding121/Titanium-Web-Proxy](https://github.com/justcoding121/Titanium-Web-Proxy)
+
+### ⚖️ Yasal Uyarı
+
+Bu proje yalnızca eğitim ve kişisel kullanım amacıyla geliştirilmiştir; geliştirici, yazılımın kötüye kullanımından veya telif hakkı ihlallerinden sorumlu tutulamaz.
