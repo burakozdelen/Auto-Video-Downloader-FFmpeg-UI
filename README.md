@@ -1,6 +1,6 @@
 # 🎬 Auto-Video-Downloader-FFmpeg-UI
 
-[![Download LinkCatch](https://img.shields.io/badge/Download-Latest_Version-blue?style=for-the-badge&logo=windows)](https://github.com/burakozdelen/Auto-Video-Downloader-FFmpeg-UI/releases/download/v1.0/Video.Downloader.v1.0.zip)
+[![Download](https://img.shields.io/badge/Download-Latest_Version-blue?style=for-the-badge&logo=windows)](https://github.com/burakozdelen/Auto-Video-Downloader-FFmpeg-UI/releases/download/v1.0/Video.Downloader.v1.0.zip)
 
 **Select Language / Dil Seçiniz:**
 [🇺🇸 English](#-english) | [🇹🇷 Türkçe](#-türkçe)
@@ -9,7 +9,7 @@
 
 ## 🇺🇸 English
 
-**LinkCatch** is an advanced Windows desktop application that analyzes your browser's network traffic to automatically detect, capture, and download fragmented video streams (HLS/m3u8) and subtitles.
+**Video Downloader** is an advanced Windows desktop application that analyzes your browser's network traffic to automatically detect, capture, and download fragmented video streams (HLS/m3u8) and subtitles.
 
 This tool simplifies complex video downloading processes and utilizes the power of **FFmpeg** in the background to merge audio, video, and subtitles into a single file.
 
@@ -72,7 +72,7 @@ This project is intended solely for educational and personal use; the developer 
 
 ## 🇹🇷 Türkçe
 
-**LinkCatch**, tarayıcınızdaki video trafiğini analiz ederek yakalayan, parçalı akışları (HLS/m3u8) ve altyazıları otomatik olarak tespit edip indirmenizi sağlayan gelişmiş bir Windows masaüstü uygulamasıdır.
+**Video Downloader**, tarayıcınızdaki video trafiğini analiz ederek yakalayan, parçalı akışları (HLS/m3u8) ve altyazıları otomatik olarak tespit edip indirmenizi sağlayan gelişmiş bir Windows masaüstü uygulamasıdır.
 
 Bu araç, karmaşık video indirme işlemlerini sizin için basitleştirir ve arka planda FFmpeg gücünü kullanır.
 
