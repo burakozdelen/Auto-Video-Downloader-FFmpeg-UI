@@ -218,7 +218,7 @@ namespace LinkCatch
             string url = e.HttpClient.Request.Url.ToString().ToLowerInvariant();
 
             // ==============================================================================
-            // A. TRASH FILTER (This part stays the same, we're removing the unnecessary items)
+            // A. TRASH FILTER (Discard unnecessary files)
             // ==============================================================================
             if (url.Contains("google") || url.Contains("facebook") || url.Contains("analytics") ||
                 url.Contains("doubleclick") || url.Contains("fonts.") || url.Contains("favicon") ||
@@ -231,66 +231,65 @@ namespace LinkCatch
             }
 
             // ==============================================================================
-            // B. CAPTION CAPTURE
+            // DETECTION LOGIC (PRIORITY ORDER IS IMPORTANT)
             // ==============================================================================
             bool isSubtitle = false;
+            bool isVideo = false;
 
+            // STEP 1: SUBTITLE CHECK FIRST (We trust the URL regardless of Content-Type)
+            // If URL contains or ends with .vtt/.srt, it is definitely a subtitle.
             if (url.EndsWith(".vtt") || url.Contains(".vtt?") ||
                 url.EndsWith(".srt") || url.Contains(".srt?") ||
                 url.EndsWith(".ass") || url.EndsWith(".dfxp"))
             {
                 isSubtitle = true;
             }
+            // If we can't tell from the URL, check Content-Type
             else if (contentType.Contains("text/vtt") ||
                      contentType.Contains("application/x-subrip") ||
                      contentType.Contains("application/ttml+xml"))
             {
                 isSubtitle = true;
             }
-            else if (url.Contains("subtitle") || url.Contains("caption") || url.Contains("cc_"))
+            // If URL contains "subtitle" keyword and is not image/html
+            else if ((url.Contains("subtitle") || url.Contains("caption") || url.Contains("cc_")) &&
+                     (!contentType.Contains("video") && !contentType.Contains("html") && !contentType.Contains("image")))
             {
-                if (!contentType.Contains("video") && !contentType.Contains("html") && !contentType.Contains("image"))
-                {
-                    isSubtitle = true;
-                }
+                isSubtitle = true;
             }
 
-            // ==============================================================================
-            // C. VIDEO CAPTURE (UPDATED SECTION HERE)
-            // ==============================================================================
-            bool isVideo = false;
-
-            // 1. Types of Net Videos
-            if (contentType.Contains("application/vnd.apple.mpegurl") ||
-                contentType.Contains("application/x-mpegurl") ||
-                contentType.Contains("application/dash+xml") ||
-                contentType.Contains("video/"))
+            // STEP 2: CHECK FOR VIDEO ONLY IF IT IS NOT A SUBTITLE
+            if (!isSubtitle)
             {
-                isVideo = true;
-            }
-            // 2. Extension Check (regardless of Content-Type)
-            else if (url.Contains(".mp4") || url.Contains(".m3u8") || url.Contains(".ts") || url.Contains(".mkv"))
-            {
-                // Html değilse al
-                if (!contentType.Contains("html")) isVideo = true;
-            }
-            // 3. FILES WITHOUT EXTENSIONS AND UNKNOWN FILES!!!
-            else if (contentType.Contains("application/octet-stream") ||
-                     contentType.Contains("binary/octet-stream"))
-            {
-                // If the file is not a “JS, CSS, Font, Image” and has passed the Trash filter...
-                // And its extension is not a known “Software/System” file...
-                if (!url.EndsWith(".dll") && !url.EndsWith(".exe") && !url.EndsWith(".zip") &&
-                    !url.EndsWith(".pdf") && !url.EndsWith(".json"))
+                // Standard Video Types
+                if (contentType.Contains("application/vnd.apple.mpegurl") ||
+                    contentType.Contains("application/x-mpegurl") ||
+                    contentType.Contains("application/dash+xml") ||
+                    contentType.Contains("video/"))
                 {
-                    // Add unnamed, extensionless binary files as VIDEO candidates.
-                    // HLS key files or segments are typically in this format.
                     isVideo = true;
                 }
+                // Extension Check
+                else if (url.Contains(".mp4") || url.Contains(".m3u8") || url.Contains(".ts") || url.Contains(".mkv"))
+                {
+                    if (!contentType.Contains("html")) isVideo = true;
+                }
+                // UNKNOWN FILES (Octet-Stream)
+                // This part was catching .vtt files shown in your screenshot as "application/octet-stream" 
+                // and treating them as video. Now that we check "if (!isSubtitle)" above, subtitles will never enter here.
+                else if (contentType.Contains("application/octet-stream") ||
+                         contentType.Contains("binary/octet-stream"))
+                {
+                    // Exclude system files
+                    if (!url.EndsWith(".dll") && !url.EndsWith(".exe") && !url.EndsWith(".zip") &&
+                        !url.EndsWith(".pdf") && !url.EndsWith(".json") && !url.EndsWith(".key"))
+                    {
+                        isVideo = true;
+                    }
+                }
             }
-
             // ==============================================================================
-            // D. ADDING TO THE LIST PROCESS
+            // D. ADDING TO LIST PROCESS
             // ==============================================================================
             if (isVideo || isSubtitle)
             {
@@ -299,8 +298,6 @@ namespace LinkCatch
                     if (_capturedUrls.Contains(e.HttpClient.Request.Url)) return;
                     _capturedUrls.Add(e.HttpClient.Request.Url);
                 }
-
-                string type = isVideo ? "Video" : "Subtitle";
 
                 var requestHeaders = e.HttpClient.Request.Headers;
                 string referer = requestHeaders.FirstOrDefault(h => h.Name.Equals("Referer", StringComparison.OrdinalIgnoreCase))?.Value ?? "Null";
@@ -324,17 +321,15 @@ namespace LinkCatch
                         Useragent = useragent,
                         Origin = origin
                     };
+
                     if (isVideo)
                     {
-                        // If the captured item is VIDEO, add it to the list on the screen
+                        // If VIDEO, add to screen list
                         videoList.Items.Add(item);
                     }
                     else if (isSubtitle)
                     {
-                        // If the captured item is a SUBTITLE, add it to the screen,
-                        // otherwise add it directly to the background list.
-                        // Since we are not adding it to the list, there is no need to use .Clone() here.
-                        // However, it is good to use lock for thread safety.
+                        // If SUBTITLE, just add to background (Not visible on screen, appears when Next is clicked)
                         lock (_backgroundSubtitles)
                         {
                             _backgroundSubtitles.Add(item);
