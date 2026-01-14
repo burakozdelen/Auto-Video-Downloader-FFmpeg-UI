@@ -21,11 +21,13 @@ namespace LinkCatch
         private Main _mainForm;
         public DownloadSession SessionData { get; set; }
         private Main.VideoDetailPacket _packet;
+        private Process _activeProcess = null;
         public DownloadInfo(Main.VideoDetailPacket data, Main mainForm)
         {
             InitializeComponent();
             _packet = data;
             _mainForm = mainForm;
+            this.FormClosing += DownloadInfo_FormClosing;
         }
         private void DownloadInfo_Load(object sender, EventArgs e)
         {
@@ -574,13 +576,23 @@ namespace LinkCatch
             using (Process proc = new Process())
             {
                 proc.StartInfo = psi;
+                _activeProcess = proc;
                 proc.OutputDataReceived += (s, e) => { if (!string.IsNullOrEmpty(e.Data)) AddLog(e.Data); };
                 proc.ErrorDataReceived += (s, e) => { if (!string.IsNullOrEmpty(e.Data)) AddLog("LOG: " + e.Data); };
-
-                proc.Start();
-                proc.BeginOutputReadLine();
-                proc.BeginErrorReadLine();
-                await Task.Run(() => proc.WaitForExit());
+                try
+                {
+                    proc.Start();
+                    proc.BeginOutputReadLine();
+                    proc.BeginErrorReadLine();
+                    await Task.Run(() => proc.WaitForExit());
+                }
+                finally
+                {
+                    if (_activeProcess == proc)
+                    {
+                        _activeProcess = null;
+                    }
+                }
             }
         }
         private void buttonDownload_Click(object sender, EventArgs e)
@@ -647,6 +659,22 @@ namespace LinkCatch
 
                     }
                 }
+            }
+        }
+        private void DownloadInfo_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ForceKill();
+        }
+        public void ForceKill()
+        {
+            if (_activeProcess != null && !_activeProcess.HasExited)
+            {
+                try
+                {
+                    _activeProcess.Kill();
+                    _activeProcess = null;
+                }
+                catch {}
             }
         }
     }

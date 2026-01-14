@@ -366,17 +366,19 @@ namespace LinkCatch
         {
             try
             {
-                // First, try stopping the proxy cleanly.
+                var openDownloads = Application.OpenForms.OfType<DownloadInfo>().ToList();
+
+                foreach (var dwForm in openDownloads)
+                {
+                    // Kill FFmpeg
+                    dwForm.ForceKill();
+                    dwForm.Close();
+                }
                 StopProxy();
             }
-            catch
-            {
-                // If there's an error, ignore it, we're closing anyway
-            }
+            catch{}
             finally
             {
-                // To prevent the Garbage Collector (GC) from waiting for the finalizer thread running at that time
-                // Forcefully terminate the current process.
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
         }
