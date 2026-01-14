@@ -236,9 +236,15 @@ namespace LinkCatch
             bool isSubtitle = false;
             bool isVideo = false;
 
+            
+            if (url.EndsWith(".m3u8") || url.EndsWith(".mp4") || url.EndsWith(".ts") || url.EndsWith(".mkv") || url.EndsWith(".avi"))
+            {
+                isVideo = true;
+                isSubtitle = false;
+            }
             // STEP 1: SUBTITLE CHECK FIRST (We trust the URL regardless of Content-Type)
             // If URL contains or ends with .vtt/.srt, it is definitely a subtitle.
-            if (url.EndsWith(".vtt") || url.Contains(".vtt?") ||
+            else if (url.EndsWith(".vtt") || url.Contains(".vtt?") ||
                 url.EndsWith(".srt") || url.Contains(".srt?") ||
                 url.EndsWith(".ass") || url.EndsWith(".dfxp"))
             {
